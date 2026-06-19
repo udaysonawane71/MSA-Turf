@@ -1,30 +1,38 @@
-const bookingRoutes = require("./routes/bookingRoutes");
 const express = require("express");
 const dotenv = require("dotenv");
-const connectDB = require("./config/db");
-const userRoutes = require("./routes/userRoutes");
 const cors = require("cors");
+
+const connectDB = require("./config/db");
+
+const userRoutes = require("./routes/userRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
 
 dotenv.config();
 
 const app = express();
 
-// ✅ CORS FIX (IMPORTANT)
-app.use(cors({
-  origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+// ✅ CORS FIX FOR LOCAL + VERCEL
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://msa-turf.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
-// DB connect
+// ✅ MongoDB Connection
 connectDB();
 
-// Routes
+// ✅ Routes
 app.use("/api/users", userRoutes);
 app.use("/api/bookings", bookingRoutes);
 
+// ✅ Test Route
 app.get("/", (req, res) => {
   res.send("MSA Turf Backend Running 🚀");
 });

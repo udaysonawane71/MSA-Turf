@@ -8,33 +8,84 @@ function BookSlot() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
-  const handleBooking = async () => {
+  const amount = 800;
+
+  const handlePayment = async () => {
+    if (!groundName || !date || !time) {
+      alert("Please select ground, date and time");
+      return;
+    }
+
     try {
-      const res = await fetch(
-        "https://msa-turf-api.onrender.com/api/bookings",
+      // 1. Create Razorpay Order
+      const orderRes = await fetch(
+        "https://msa-turf-api.onrender.com/api/payment/create-order",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            groundName,
-            date,
-            time,
-          }),
+          body: JSON.stringify({ amount }),
         }
       );
 
-      const data = await res.json();
+      const order = await orderRes.json();
 
-      if (!res.ok) {
-        alert(data.message);
+      if (!orderRes.ok) {
+        alert(order.message || "Payment order failed");
         return;
       }
 
-      alert("Booking Successful ✅");
+      // 2. Open Razorpay Payment Popup
+      const options = {
+        key: "rzp_test_T3YG0Nue1aDao4",
+        amount: order.amount,
+        currency: "INR",
+        name: "MSA Turf",
+        description: "Turf Slot Booking",
+        order_id: order.id,
 
-      navigate("/my-bookings");
+        handler: async function () {
+          // 3. Payment success झाल्यावर booking save
+          const bookingRes = await fetch(
+            "https://msa-turf-api.onrender.com/api/bookings",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                groundName,
+                date,
+                time,
+              }),
+            }
+          );
+
+          const bookingData = await bookingRes.json();
+
+          if (!bookingRes.ok) {
+            alert(bookingData.message);
+            return;
+          }
+
+          alert("Payment & Booking Successful ✅");
+          navigate("/my-bookings");
+        },
+
+        prefill: {
+          name: "MSA Turf Player",
+          email: "player@gmail.com",
+          contact: "9999999999",
+        },
+
+        theme: {
+          color: "#16a34a",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
 
     } catch (error) {
       console.log(error);
@@ -51,7 +102,6 @@ function BookSlot() {
           🏏 Book Your Turf
         </h1>
 
-        {/* Ground */}
         <label className="font-semibold">
           Select Ground
         </label>
@@ -59,28 +109,14 @@ function BookSlot() {
         <select
           className="border w-full p-3 rounded mt-2 mb-4"
           value={groundName}
-          onChange={(e) =>
-            setGroundName(e.target.value)
-          }
+          onChange={(e) => setGroundName(e.target.value)}
         >
-          <option value="">
-            Select Ground
-          </option>
-
-          <option value="MSA Turf Ground 1">
-            MSA Turf Ground 1
-          </option>
-
-          <option value="MSA Turf Ground 2">
-            MSA Turf Ground 2
-          </option>
-
-          <option value="MSA Turf Ground 3">
-            MSA Turf Ground 3
-          </option>
+          <option value="">Select Ground</option>
+          <option value="MSA Turf Ground 1">MSA Turf Ground 1</option>
+          <option value="MSA Turf Ground 2">MSA Turf Ground 2</option>
+          <option value="MSA Turf Ground 3">MSA Turf Ground 3</option>
         </select>
 
-        {/* Date */}
         <label className="font-semibold">
           Select Date
         </label>
@@ -89,12 +125,9 @@ function BookSlot() {
           type="date"
           className="border w-full p-3 rounded mt-2 mb-4"
           value={date}
-          onChange={(e) =>
-            setDate(e.target.value)
-          }
+          onChange={(e) => setDate(e.target.value)}
         />
 
-        {/* Time */}
         <label className="font-semibold">
           Select Time Slot
         </label>
@@ -102,36 +135,20 @@ function BookSlot() {
         <select
           className="border w-full p-3 rounded mt-2 mb-6"
           value={time}
-          onChange={(e) =>
-            setTime(e.target.value)
-          }
+          onChange={(e) => setTime(e.target.value)}
         >
-          <option value="">
-            Select Time
-          </option>
-
-          <option value="7 AM - 9 AM">
-            7 AM - 9 AM
-          </option>
-
-          <option value="9 AM - 11 AM">
-            9 AM - 11 AM
-          </option>
-
-          <option value="4 PM - 6 PM">
-            4 PM - 6 PM
-          </option>
-
-          <option value="7 PM - 9 PM">
-            7 PM - 9 PM
-          </option>
+          <option value="">Select Time</option>
+          <option value="7 AM - 9 AM">7 AM - 9 AM</option>
+          <option value="9 AM - 11 AM">9 AM - 11 AM</option>
+          <option value="4 PM - 6 PM">4 PM - 6 PM</option>
+          <option value="7 PM - 9 PM">7 PM - 9 PM</option>
         </select>
 
         <button
-          onClick={handleBooking}
+          onClick={handlePayment}
           className="bg-green-600 text-white w-full py-3 rounded-lg text-xl hover:bg-green-700"
         >
-          Book Now 🏏
+          Pay ₹800 & Book Now
         </button>
 
       </div>

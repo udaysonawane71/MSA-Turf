@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 
 const userRoutes = require("./routes/userRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ connectDB();
 // ✅ Routes
 app.use("/api/users", userRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/payment", paymentRoutes);
 
 // ✅ Test Route
 app.get("/", (req, res) => {

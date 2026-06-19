@@ -12,7 +12,7 @@ function MyBookings() {
   const cancelBooking = async (id) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/bookings/${id}`,
+        `https://msa-turf-api.onrender.com/api/bookings/${id}`,
         {
           method: "PUT",
         }
@@ -23,7 +23,7 @@ function MyBookings() {
       alert(data.message);
 
       // Refresh bookings
-      fetch("http://localhost:5000/api/bookings")
+      fetch("https://msa-turf-api.onrender.com/api/bookings")
         .then((res) => res.json())
         .then((data) => setBookings(data));
 

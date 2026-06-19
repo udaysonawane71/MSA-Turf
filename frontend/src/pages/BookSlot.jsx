@@ -11,7 +11,7 @@ function BookSlot() {
   const handleBooking = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/bookings",
+        "https://msa-turf-api.onrender.com/api/bookings",
         {
           method: "POST",
           headers: {

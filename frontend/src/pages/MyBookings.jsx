@@ -4,7 +4,7 @@ function MyBookings() {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/bookings")
+    fetch("https://msa-turf-api.onrender.com/api/bookings")
       .then((res) => res.json())
       .then((data) => setBookings(data));
   }, []);

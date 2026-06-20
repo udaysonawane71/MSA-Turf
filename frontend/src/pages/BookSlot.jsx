@@ -16,8 +16,12 @@ function BookSlot() {
       return;
     }
 
+    if (!window.Razorpay) {
+      alert("Razorpay SDK not loaded. Please refresh page.");
+      return;
+    }
+
     try {
-      // 1. Create Razorpay Order
       const orderRes = await fetch(
         "https://msa-turf-api.onrender.com/api/payment/create-order",
         {
@@ -36,7 +40,6 @@ function BookSlot() {
         return;
       }
 
-      // 2. Open Razorpay Payment Popup
       const options = {
         key: "rzp_test_T3YG0Nue1aDao4",
         amount: order.amount,
@@ -45,8 +48,7 @@ function BookSlot() {
         description: "Turf Slot Booking",
         order_id: order.id,
 
-        handler: async function () {
-          // 3. Payment success झाल्यावर booking save
+        handler: async function (response) {
           const bookingRes = await fetch(
             "https://msa-turf-api.onrender.com/api/bookings",
             {
@@ -58,6 +60,10 @@ function BookSlot() {
                 groundName,
                 date,
                 time,
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+                amount,
+                paymentStatus: "Paid",
               }),
             }
           );
@@ -85,8 +91,12 @@ function BookSlot() {
       };
 
       const rzp = new window.Razorpay(options);
-      rzp.open();
 
+      rzp.on("payment.failed", function () {
+        alert("Payment Failed ❌");
+      });
+
+      rzp.open();
     } catch (error) {
       console.log(error);
       alert("Something went wrong");
@@ -95,17 +105,12 @@ function BookSlot() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-
       <div className="bg-white shadow-xl rounded-xl p-8 w-[500px]">
-
         <h1 className="text-4xl font-bold text-center mb-8">
           🏏 Book Your Turf
         </h1>
 
-        <label className="font-semibold">
-          Select Ground
-        </label>
-
+        <label className="font-semibold">Select Ground</label>
         <select
           className="border w-full p-3 rounded mt-2 mb-4"
           value={groundName}
@@ -117,10 +122,7 @@ function BookSlot() {
           <option value="MSA Turf Ground 3">MSA Turf Ground 3</option>
         </select>
 
-        <label className="font-semibold">
-          Select Date
-        </label>
-
+        <label className="font-semibold">Select Date</label>
         <input
           type="date"
           className="border w-full p-3 rounded mt-2 mb-4"
@@ -128,10 +130,7 @@ function BookSlot() {
           onChange={(e) => setDate(e.target.value)}
         />
 
-        <label className="font-semibold">
-          Select Time Slot
-        </label>
-
+        <label className="font-semibold">Select Time Slot</label>
         <select
           className="border w-full p-3 rounded mt-2 mb-6"
           value={time}
@@ -150,9 +149,7 @@ function BookSlot() {
         >
           Pay ₹800 & Book Now
         </button>
-
       </div>
-
     </div>
   );
 }

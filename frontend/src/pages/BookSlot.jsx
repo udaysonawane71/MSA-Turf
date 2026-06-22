@@ -8,7 +8,7 @@ function BookSlot() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
-  const amount = 800;
+ const amount = 1;
 
   const handlePayment = async () => {
     if (!groundName || !date || !time) {
@@ -147,7 +147,7 @@ function BookSlot() {
           onClick={handlePayment}
           className="bg-green-600 text-white w-full py-3 rounded-lg text-xl hover:bg-green-700"
         >
-          Pay ₹800 & Book Now
+          Pay ₹1 & Book Now
         </button>
       </div>
     </div>

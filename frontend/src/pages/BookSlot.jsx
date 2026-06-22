@@ -41,7 +41,7 @@ function BookSlot() {
       }
 
       const options = {
-        key: "rzp_test_T3YG0Nue1aDao4",
+        key: "rzp_live_T4ZWHFpcHz9SlT",
         amount: order.amount,
         currency: "INR",
         name: "MSA Turf",

@@ -2,6 +2,19 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    userName: {
+      type: String,
+    },
+
+    userEmail: {
+      type: String,
+    },
+
     groundName: {
       type: String,
       required: true,
@@ -17,9 +30,32 @@ const bookingSchema = new mongoose.Schema(
       required: true,
     },
 
-    status: {
+    amount: {
+      type: Number,
+      default: 0,
+    },
+
+    paymentId: {
+      type: String,
+    },
+
+    orderId: {
+      type: String,
+    },
+
+    paymentStatus: {
+      type: String,
+      default: "Pending",
+    },
+
+    bookingStatus: {
       type: String,
       default: "Confirmed",
+    },
+
+    refundStatus: {
+      type: String,
+      default: "Not Requested",
     },
   },
   {

@@ -8,11 +8,19 @@ function BookSlot() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
- const amount = 1;
+  const amount = 1;
 
   const handlePayment = async () => {
     if (!groundName || !date || !time) {
       alert("Please select ground, date and time");
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      alert("Please login first");
+      navigate("/login");
       return;
     }
 
@@ -57,13 +65,21 @@ function BookSlot() {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
+                userId: user._id,
+                userName: user.name,
+                userEmail: user.email,
+
                 groundName,
                 date,
                 time,
+
                 paymentId: response.razorpay_payment_id,
                 orderId: response.razorpay_order_id,
+
                 amount,
                 paymentStatus: "Paid",
+                bookingStatus: "Confirmed",
+                refundStatus: "Not Requested",
               }),
             }
           );
@@ -80,8 +96,8 @@ function BookSlot() {
         },
 
         prefill: {
-          name: "MSA Turf Player",
-          email: "player@gmail.com",
+          name: user.name,
+          email: user.email,
           contact: "9999999999",
         },
 

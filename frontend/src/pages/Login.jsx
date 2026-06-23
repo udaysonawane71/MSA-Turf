@@ -9,7 +9,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch("https://msa-turf-api.onrender.com/api/users/login   ", {
+      const res = await fetch("https://msa-turf-api.onrender.com/api/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,6 +33,9 @@ function Login() {
       alert("Login successful ✔");
 
       console.log("LOGIN SUCCESS:", data);
+
+      localStorage.setItem("token", data.token);
+localStorage.setItem("user", JSON.stringify(data.user));
 
       navigate("/dashboard");
 

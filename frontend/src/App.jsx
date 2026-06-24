@@ -8,6 +8,8 @@ import Register from "./pages/Register";
 import About from "./pages/About";
 import BookSlot from "./pages/BookSlot";
 import Dashboard from "./pages/Dashboard";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 
 // NEW PAGES
 import MyBookings from "./pages/MyBookings";
@@ -32,6 +34,10 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         <Route path="/dashboard" element={<Dashboard />} />
+
+        <Route path="/admin-login" element={<AdminLogin />} />
+
+      <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
         {/* NEW ROUTES */}
 
